@@ -7,6 +7,8 @@ Simulates progression of pendula and renders out frames based on a defined colou
 
 See `output/` for more output. These were generated at 1024x1024 resolution at 120 updates per second, with every 4th frame rendered (30fps), for 4 minutes of simulation. This took around 6 hours (single threaded).
 
+The colourmap of angle space (pendulum position) to colour is the same as the first rendered frame, `frame_0001.png`, as this is just the mapping before any movement. The map is toroidal (bidirectionally cyclic) and unique from $[2\pi, 2\pi) \to C$, where $C$ is the set of all unsigned 8-bit integer 3-tuples (so, RGB).
+
 Parallelisation is a strong area for improvement; even dividing the angle space into a 2x2 grid across 4 threads would massively bump performance.
 
 >## Warning for local use:
