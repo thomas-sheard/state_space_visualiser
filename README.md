@@ -9,7 +9,8 @@ See `output/` for more output. These are 1024x1024 resolution generated at 120 u
 
 The colourmap of angle space (pendulum position) to colour is the same as the first rendered frame, `frame_0001.png`, as this is just the mapping before any movement. The map is toroidal (bidirectionally cyclic) and unique from $[2\pi, 2\pi) \to C$, where $C$ is the set of all unsigned 8-bit integer 3-tuples (so, RGB).
 
-Parallelisation is a strong area for improvement; even dividing the angle space into a 2x2 grid across 4 threads would massively bump performance.
+Parallelisation is a strong area for improvement; even dividing the angle space into a 2x2 grid across 4 threads would massively bump performance. 
+The colormap I chose, while satisfying as an injective mapping, could be more visually appealing. It's pretty muddy and grey at the moment; more contrast and generally richer colours could be fun.
 
 >## Warning for local use:
 >Generates large files. The prompted `ffmpeg` concatenation after rendering reduces size significantly (~20x) but a high-quality render (like in `output`) will generate ~20G of pngs, with a ~1G mp4 after concatenation.
