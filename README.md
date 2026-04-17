@@ -1,7 +1,7 @@
 # State Space Visualiser
 
 A double pendulum simulation for all pendula in angle space for a specified resolution.
-Simulates progression of pendula and renders out frames based on a defined colourmap, which colours each pixel (pendulum) $p_{ij}$ uniquely from its position.
+Simulates progression of pendula and renders out frames based on a defined colourmap, which colours each pixel (pendulum) $p_{ij}$ uniquely from its position $(\theta_1, \theta_2)$.
 
 ![Frame 64 of a high fidelity simulation](/output/frame_0064.png)
 
