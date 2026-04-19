@@ -3,7 +3,7 @@
 A double pendulum simulation for all pendula in angle space for a specified resolution.
 
 <p align='center'>
-  <img src="/output/render_512_10.gif" alt="Compressed gif of render" width="256">
+  <img src="/output/render_512_10.gif" alt="Compressed gif of render" width="512">
 </p>
 
 Simulates progression of pendula and renders out frames based on a defined colourmap, which colours each pixel (pendulum) $p_{ij}$ uniquely from its position $(\theta_1, \theta_2)$.
