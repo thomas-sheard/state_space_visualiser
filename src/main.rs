@@ -1,4 +1,5 @@
 use nannou::{color::FromColor, prelude::*};
+use std::io::{self, Write};
 use image;
 
 // state stores a single double pendula's information
@@ -111,8 +112,12 @@ fn rk4(state: &State, dt: f32) -> State {
 
 // constants
 
-// render dimensions
-const RESOLUTION: f32 = 1024.0;
+// render resolution
+// 256 is great for quick tests
+// 512 is good for decent quality, gifs, longer renders
+// 1024 looks fantastic but is still manageable for a minute or so of sim
+// 2048 looks even better but only suitable for a few seconds of footage
+const RESOLUTION: f32 = 512.0;
 
 // constant model params
 const GRAVITY: f32 = 10.0; // gravity (m/s)
@@ -141,9 +146,9 @@ fn main() {
         }).collect()
     }).collect();
 
-    println!("Done.");
+    println!("Running simulation...");
 
-    let duration: f32 = 2.0; // duration to render in seconds
+    let duration: f32 = 10.0; // duration to render in seconds
 
     // separating ups and fps lets us maintain simulation accuracy at lower rendering cost
     let ups: f32 = 120.0; // updates per second (simulation steps)
@@ -155,7 +160,7 @@ fn main() {
     let dt: f32 = 1.0 / ups;
 
     // number of sim steps to run
-    let iterations = (duration / dt) as u32;
+    let iterations = (duration / dt) as u32 + 1;
 
     // number of frames to render
     let frames = iterations / repeat_each;
@@ -173,11 +178,19 @@ fn main() {
             }
         }
         // then render every repeat_each'th frame
-        println!("Rendering frame {}/{} ({:.1}%)", frame, frames+1, (frame as f32 / (frames+1) as f32) * 100.0);
+        io::stdout().flush().unwrap();
+        print!("\rRendering frame {}/{} ({:.1}%)", frame, frames, (frame as f32 / (frames) as f32) * 100.0);
         render_scene(&scene, frame);
     }
 
-    println!("Rendering complete! Run\nffmpeg -framerate {} -pattern_type glob -i \"output/*.png\" -c:v libx264 -pix_fmt yuv420p render.mp4\nto concatenate into video.", fps as u32);
+    println!();
+
+    let res = RESOLUTION as u32;
+    let time = duration as u32;
+
+    println!("Rendering complete!");
+    // system dependent... sorry!
+    println!("Run\nffmpeg -framerate {} -pattern_type glob -i \"output/*.png\" -c:v libx264 -pix_fmt yuv420p renders/render_{res}_{time}.mp4\nor\nmagick convert -delay {} -loop 0 output/*.png renders/render_{res}_{time}.gif\nto concatenate into video.", fps as u32, (100.0 / fps) as u32);
     
 }
 
@@ -190,17 +203,12 @@ fn render_scene(scene: &Vec<Vec<State>>, iteration: u32) {
     // rows need reversing because images start from the top, sim starts from the bottom
     for i in (0..res).rev() {
         for j in 0..res {
-            //let y = res - j;
             let colour = colourmap(&scene[i][j]);
-            //let colour = debug_colormap(i as u32, j as u32);
             raw_colours.extend_from_slice(&colour);
         }
     }
  
     // export as png
-    //println!("{:?}", raw_colours);
-    //println!("{:?}", raw_colours.len());
-
     let filename = format!("output/frame_{:04}.png", iteration);
 
     image::save_buffer(
@@ -213,14 +221,10 @@ fn render_scene(scene: &Vec<Vec<State>>, iteration: u32) {
 
 }
 
-//fn debug_colormap(x: u32, y: u32) -> [u8; 3] {
-//    if (x + y) % 2 == 0 { [255, 255, 255] } else { [0, 0, 0] }
-//}
-
 fn colourmap(state: &State) -> [u8; 3] {
 
     // any mapping from [-PI, PI) -> Z^3 will work here
-    // but non-unique mappings give less visually interesting
+    // but non-unique mappings give less visually interesting results
 
     let x = state.theta_2;
     let y = state.theta_1;
